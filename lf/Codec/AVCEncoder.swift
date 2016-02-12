@@ -170,6 +170,17 @@ final class AVCEncoder:NSObject, Encoder, AVCaptureVideoDataOutputSampleBufferDe
             return
         }
         encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
+        
+        var image = delegate?.renderSampleBuffer(sampleBuffer)
+        if image == nil {
+            image = CMSampleBufferGetImageBuffer(sampleBuffer)!
+        }
+        
+        if let image = image {
+            encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
+        }
+        //let image:CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer)!
+        
     }
 
     func dispose() {

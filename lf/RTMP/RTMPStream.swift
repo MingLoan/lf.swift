@@ -198,7 +198,8 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
     private lazy var muxer:RTMPMuxer = RTMPMuxer()
     private var captureManager:AVCaptureSessionManager = AVCaptureSessionManager()
     private let lockQueue:dispatch_queue_t = dispatch_queue_create("com.github.shogo4405.lf.RTMPStream.lock", DISPATCH_QUEUE_SERIAL)
-
+    public var renderSampleBuffer: ((sampleBuffer: CMSampleBufferRef) -> (CVImageBuffer?))?
+    
     public init(rtmpConnection: RTMPConnection) {
         self.rtmpConnection = rtmpConnection
         super.init()
@@ -382,6 +383,14 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
         captureManager.exposurePointOfInterest = exposure
     }
 
+    func renderSampleBuffer(sampleBuffer: CMSampleBuffer) -> CVImageBuffer? {
+        guard let renderSampleBuffer = renderSampleBuffer else {
+            return nil
+        }
+        
+        return renderSampleBuffer(sampleBuffer: sampleBuffer)
+    }
+    
     func sampleOutput(muxer:RTMPMuxer, audio buffer:NSData, timestamp:Double) {
         let type:FLVTag.TagType = .Audio
         rtmpConnection.doWrite(RTMPChunk(

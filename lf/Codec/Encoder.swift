@@ -6,6 +6,7 @@ protocol Encoder {
 }
 
 protocol VideoEncoderDelegate: class {
+    func renderSampleBuffer(sampleBuffer: CMSampleBuffer) -> CVImageBuffer?
     func didSetFormatDescription(video formatDescription:CMFormatDescriptionRef?)
     func sampleOuput(video sampleBuffer: CMSampleBuffer)
 }
