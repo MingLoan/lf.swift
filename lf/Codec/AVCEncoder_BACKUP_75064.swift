@@ -166,20 +166,24 @@ final class AVCEncoder:NSObject, Encoder, AVCaptureVideoDataOutputSampleBufferDe
     }
 
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
+<<<<<<< 82c4890e83def25084817ba8279a3c7ff4ae352d
         guard let image:CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
-        //encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
+        encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
+=======
         
-        var filteredImage = delegate?.renderPixelBuffer(image)
-        if filteredImage == nil {
-            filteredImage = image
+        var image = delegate?.renderSampleBuffer(sampleBuffer)
+        if image == nil {
+            image = CMSampleBufferGetImageBuffer(sampleBuffer)!
         }
         
-        if let finalImage = filteredImage {
-            encodeImageBuffer(finalImage, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
+        if let image = image {
+            encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
         }
+        //let image:CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer)!
         
+>>>>>>> hook samplebuffer output out
     }
 
     func dispose() {

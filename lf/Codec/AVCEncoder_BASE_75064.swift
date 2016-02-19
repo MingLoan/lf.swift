@@ -117,11 +117,12 @@ final class AVCEncoder:NSObject, Encoder, AVCaptureVideoDataOutputSampleBufferDe
         }
         let encoder:AVCEncoder = unsafeBitCast(outputCallbackRefCon, AVCEncoder.self)
         encoder.formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer!)
+
         encoder.delegate?.sampleOuput(video: sampleBuffer!)
     }
 
     private var _session:VTCompressionSessionRef? = nil
-    private var session:VTCompressionSessionRef? {
+    private var session:VTCompressionSessionRef! {
         get {
             if (_session == nil)  {
                 status = VTCompressionSessionCreate(
@@ -136,19 +137,18 @@ final class AVCEncoder:NSObject, Encoder, AVCaptureVideoDataOutputSampleBufferDe
                     unsafeBitCast(self, UnsafeMutablePointer<Void>.self),
                     &_session
                 )
-                guard status == noErr else {
-                    print("VTCompressionSessionCreate error \(status)")
-                    return nil
+                if (status == noErr) {
+                    status = VTSessionSetProperties(_session!, properties)
                 }
-                invalidateSession = false
-                status = VTSessionSetProperties(_session!, properties)
-                VTCompressionSessionPrepareToEncodeFrames(_session!)
+                if (status == noErr) {
+                    VTCompressionSessionPrepareToEncodeFrames(_session!)
+                }
             }
-            return _session
+            return _session!
         }
         set {
-            if let session:VTCompressionSessionRef = _session {
-                VTCompressionSessionInvalidate(session)
+            if (_session != nil) {
+                VTCompressionSessionInvalidate(_session!)
             }
             _session = newValue
         }
@@ -157,29 +157,15 @@ final class AVCEncoder:NSObject, Encoder, AVCaptureVideoDataOutputSampleBufferDe
     func encodeImageBuffer(imageBuffer:CVImageBuffer, presentationTimeStamp:CMTime, duration:CMTime) {
         if (invalidateSession) {
             session = nil
-        }
-        guard let session:VTCompressionSessionRef = session else {
-            return
+            invalidateSession = false
         }
         var flags:VTEncodeInfoFlags = VTEncodeInfoFlags()
         VTCompressionSessionEncodeFrame(session, imageBuffer, presentationTimeStamp, duration, nil, nil, &flags)
     }
 
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
-        guard let image:CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
-        //encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
-        
-        var filteredImage = delegate?.renderPixelBuffer(image)
-        if filteredImage == nil {
-            filteredImage = image
-        }
-        
-        if let finalImage = filteredImage {
-            encodeImageBuffer(finalImage, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
-        }
-        
+        let image:CVImageBufferRef = CMSampleBufferGetImageBuffer(sampleBuffer)!
+        encodeImageBuffer(image, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
     }
 
     func dispose() {
