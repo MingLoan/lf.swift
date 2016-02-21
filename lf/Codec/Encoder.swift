@@ -7,6 +7,8 @@ protocol Encoder {
 
 protocol VideoEncoderDelegate: class {
     func renderPixelBuffer(pixelBuffer: CVPixelBuffer) -> CVImageBuffer?
+    func streamReadyState() -> RTMPStream.ReadyState
+    
     func didSetFormatDescription(video formatDescription:CMFormatDescriptionRef?)
     func sampleOuput(video sampleBuffer: CMSampleBuffer)
 }

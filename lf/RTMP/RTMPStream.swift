@@ -219,9 +219,9 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
 
     public func attachCamera(camera:AVCaptureDevice?) {
         captureManager.attachCamera(camera)
-        if (readyState == .Publishing) {
+        //if (readyState == .Publishing) {
             captureManager.videoDataOutput.setSampleBufferDelegate(muxer.videoEncoder, queue: muxer.videoEncoder.lockQueue)
-        }
+        //}
         captureManager.startRunning()
     }
 
@@ -294,7 +294,7 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
             )))
         }
     }
-
+    
     public func publish(name:String?) {
         self.publish(name, type: "live")
     }
@@ -383,12 +383,17 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
         captureManager.exposurePointOfInterest = exposure
     }
 
+    // added protocol methods
     func renderPixelBuffer(pixelBuffer: CVPixelBuffer) -> CVImageBuffer? {
         guard let renderPixelBuffer = renderPixelBuffer else {
             return nil
         }
         
         return renderPixelBuffer(pixelBuffer: pixelBuffer)
+    }
+    
+    func streamReadyState() -> RTMPStream.ReadyState {
+        return readyState
     }
     
     func sampleOutput(muxer:RTMPMuxer, audio buffer:NSData, timestamp:Double) {

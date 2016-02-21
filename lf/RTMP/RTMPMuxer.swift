@@ -3,6 +3,8 @@ import AVFoundation
 
 protocol RTMPMuxerDelegate: class {
     func renderPixelBuffer(pixelBuffer: CVPixelBuffer) -> CVImageBuffer?
+    func streamReadyState() -> RTMPStream.ReadyState
+    
     func sampleOutput(muxer:RTMPMuxer, audio buffer:NSData, timestamp:Double)
     func sampleOutput(muxer:RTMPMuxer, video buffer:NSData, timestamp:Double)
 }
@@ -81,8 +83,16 @@ final class RTMPMuxer: NSObject, VideoEncoderDelegate, AudioEncoderDelegate {
         delegate?.sampleOutput(self, audio: buffer, timestamp: 0)
     }
     
+    // added protocol methods
     func renderPixelBuffer(pixelBuffer: CVPixelBuffer) -> CVImageBuffer? {
         return delegate?.renderPixelBuffer(pixelBuffer)
+    }
+    
+    func streamReadyState() -> RTMPStream.ReadyState {
+        if let delegate = delegate {
+            return delegate.streamReadyState()
+        }
+        return RTMPStream.ReadyState.Initilized
     }
 
     func didSetFormatDescription(video formatDescription: CMFormatDescriptionRef?) {

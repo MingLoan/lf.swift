@@ -176,7 +176,7 @@ final class AVCEncoder:NSObject, Encoder, AVCaptureVideoDataOutputSampleBufferDe
             filteredImage = image
         }
         
-        if let finalImage = filteredImage {
+        if let finalImage = filteredImage where delegate?.streamReadyState() == RTMPStream.ReadyState.Publishing {
             encodeImageBuffer(finalImage, presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sampleBuffer), duration: CMSampleBufferGetDuration(sampleBuffer))
         }
         
