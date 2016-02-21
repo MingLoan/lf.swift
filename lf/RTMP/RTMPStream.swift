@@ -177,7 +177,7 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
                 captureManager.videoDataOutput.setSampleBufferDelegate(muxer.videoEncoder, queue: muxer.videoEncoder.lockQueue)
             case .Closed:
                 captureManager.audioDataOutput.setSampleBufferDelegate(nil, queue: nil)
-                captureManager.videoDataOutput.setSampleBufferDelegate(nil, queue: nil)
+                //captureManager.videoDataOutput.setSampleBufferDelegate(nil, queue: nil)
             default:
                 break
             }
