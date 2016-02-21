@@ -223,6 +223,8 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
             captureManager.videoDataOutput.setSampleBufferDelegate(muxer.videoEncoder, queue: muxer.videoEncoder.lockQueue)
         //}
         captureManager.startRunning()
+        muxer.dispose()
+        muxer.delegate = self
     }
 
     public func receiveAudio(flag:Bool) {
