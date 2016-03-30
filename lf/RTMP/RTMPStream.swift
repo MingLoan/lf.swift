@@ -168,7 +168,7 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
     }
 
     var id:UInt32 = RTMPStream.defaultID
-    var readyState:ReadyState = .Initilized {
+    public var readyState:ReadyState = .Initilized {
         didSet {
             switch readyState {
             case .Publishing:
