@@ -192,7 +192,7 @@ public class RTMPConnection: EventDispatcher, RTMPSocketDelegate {
         socket.doWrite(chunk)
     }
 
-    func createStream(stream: RTMPStream) {
+    public func createStream(stream: RTMPStream) {
         let responder:Responder = Responder { (data) -> Void in
             let id:Any? = data[0]
             if let id:Double = id as? Double {
