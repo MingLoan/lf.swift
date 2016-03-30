@@ -40,7 +40,7 @@ public class RTMPStream: EventDispatcher, RTMPMuxerDelegate {
         }
     }
 
-    enum ReadyState:UInt8 {
+    public enum ReadyState:UInt8 {
         case Initilized = 0
         case Open = 1
         case Play = 2
