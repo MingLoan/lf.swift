@@ -49,7 +49,7 @@ final class RTMPSocket: NSObject, NSStreamDelegate {
     }
 
     func doWrite(chunk:RTMPChunk) {
-        print(chunk)
+        //print(chunk)
         let chunks:[[UInt8]] = chunk.split(chunkSizeS)
         for chunk in chunks {
             doWrite(chunk)
